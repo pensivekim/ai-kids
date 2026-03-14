@@ -3,12 +3,12 @@ import { Auth, getAuth } from 'firebase/auth';
 import { Firestore, getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY            ?? '',
-  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN        ?? '',
-  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID         ?? '',
-  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET     ?? '',
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? '',
-  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID             ?? '',
+  apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY            ?? 'AIzaSyBqHESqDSeJMgZhrZLOUHn4Rq7YbLL0uk4',
+  authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN        ?? 'ai-kids-faf46.firebaseapp.com',
+  projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID         ?? 'ai-kids-faf46',
+  storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET     ?? 'ai-kids-faf46.firebasestorage.app',
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? '716768927268',
+  appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID             ?? '1:716768927268:web:d201e0e736ab3c606f42b1',
 };
 
 let app: FirebaseApp | null = null;
