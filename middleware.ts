@@ -47,6 +47,9 @@ export function middleware(request: NextRequest) {
   if (status === 'pending') return NextResponse.redirect(new URL('/pending', request.url));
   if (orgStatus === 'suspended') return NextResponse.redirect(new URL('/suspended', request.url));
 
+  // super_admin은 모든 경로 허용
+  if (role === 'super_admin') return NextResponse.next();
+
   const allowedPrefix = ROLE_PATHS[role];
   if (allowedPrefix && !pathname.startsWith(allowedPrefix)) {
     const isProtected = Object.values(ROLE_PATHS).some((p) => pathname.startsWith(p));
