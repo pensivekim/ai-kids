@@ -18,13 +18,16 @@ export default function AppNav() {
     router.push('/login');
   };
 
-  const navLinks = userDoc?.role === 'center_admin'
+  const navLinks = userDoc?.role === 'super_admin'
+    ? [
+        { href: '/admin', label: '관리자' },
+        { href: '/tools', label: 'AI 도구' },
+      ]
+    : userDoc?.role === 'center_admin'
     ? [
         { href: '/dashboard', label: '대시보드' },
         { href: '/tools', label: 'AI 도구' },
       ]
-    : userDoc?.role === 'super_admin'
-    ? [{ href: '/admin', label: '관리자' }]
     : [{ href: '/tools', label: 'AI 도구' }];
 
   return (
@@ -53,7 +56,7 @@ export default function AppNav() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         {userDoc && (
           <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
-            {userDoc.centerName ?? ''} · {userDoc.displayName}
+            {userDoc.centerName ? `${userDoc.centerName} · ` : ''}{userDoc.displayName}
           </span>
         )}
         <button onClick={handleLogout} style={{ background: 'none', border: '1px solid #e2e8f0', borderRadius: '0.4rem', padding: '0.35rem 0.85rem', cursor: 'pointer', fontSize: '0.85rem', color: '#64748b' }}>
