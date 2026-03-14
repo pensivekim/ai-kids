@@ -1,9 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { TOOL_CATEGORIES } from '../types';
+import { TOOL_CATEGORIES, ROLE_HOME } from '../types';
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const role = document.cookie.match(/kids_role=([^;]+)/)?.[1];
+    if (role && ROLE_HOME[role as keyof typeof ROLE_HOME]) {
+      router.replace(ROLE_HOME[role as keyof typeof ROLE_HOME]);
+    }
+  }, [router]);
+
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%)' }}>
       {/* 헤더 */}
