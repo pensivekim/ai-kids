@@ -42,7 +42,7 @@ export default function LoginPage() {
     setError(''); setLoading(true);
     try {
       const user = await loginWithEmail(email, password);
-      const doc = await getUserDoc(user.uid);
+      const doc = await getUserDoc(user.uid, user.email ?? undefined);
       if (!doc) throw new Error('계정 정보를 찾을 수 없습니다.');
       setCookies(doc.role, doc.status, 'active');
       if (doc.status === 'pending') { router.push('/pending'); return; }

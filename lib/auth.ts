@@ -65,12 +65,28 @@ export async function linkCenterByCode(uid: string, code: string) {
   return { centerId, centerName };
 }
 
-// Firestore 유저 문서 조회
-export async function getUserDoc(uid: string): Promise<KidsUser | null> {
+// Firestore 유저 문서 조회 (super_admin 자동 생성)
+export async function getUserDoc(uid: string, email?: string): Promise<KidsUser | null> {
   const db = getFirebaseDb();
   const snap = await getDoc(doc(db, 'users', uid));
-  if (!snap.exists()) return null;
-  return snap.data() as KidsUser;
+  if (snap.exists()) return snap.data() as KidsUser;
+
+  // admin@genomic.cc 는 문서 없으면 자동 super_admin 생성
+  if (email === 'admin@genomic.cc') {
+    const adminDoc: KidsUser = {
+      uid,
+      email,
+      displayName: '관리자',
+      role: 'super_admin',
+      status: 'active',
+      tokenUsed: 0,
+      createdAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db, 'users', uid), adminDoc);
+    return adminDoc;
+  }
+
+  return null;
 }
 
 // 승인 대기 선생님 목록
