@@ -82,7 +82,6 @@ export default function LoginPage() {
 
   const tabStyle = (t: Tab) => ({
     padding: '0.6rem 1.2rem',
-    borderBottom: tab === t ? '2px solid #0d9488' : '2px solid transparent',
     color: tab === t ? '#0d9488' : '#64748b',
     fontWeight: tab === t ? 700 : 400,
     cursor: 'pointer',
