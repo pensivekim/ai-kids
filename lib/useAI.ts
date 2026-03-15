@@ -7,8 +7,10 @@ export function useAI() {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [model, setModel] = useState<AIModel>('gemini-flash');
 
-  const generate = async (prompt: string, model: AIModel = 'gemini-flash') => {
+  const generate = async (prompt: string, overrideModel?: AIModel) => {
+    const selectedModel = overrideModel ?? model;
     setOutput('');
     setError('');
     setLoading(true);
@@ -18,7 +20,7 @@ export function useAI() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model,
+          model: selectedModel,
           messages: [{ role: 'user', content: prompt }],
         }),
       });
@@ -57,5 +59,5 @@ export function useAI() {
     if (output) navigator.clipboard.writeText(output);
   };
 
-  return { output, loading, error, generate, copy, setOutput };
+  return { output, loading, error, generate, copy, setOutput, model, setModel };
 }

@@ -56,6 +56,19 @@ textarea.input { resize: vertical; min-height: 80px; }
   margin-bottom: 0.35rem;
 }
 
+.tool-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .tool-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .output-box {
   background: #f8fafc;
   border: 1px solid #e2e8f0;

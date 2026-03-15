@@ -18,10 +18,17 @@ type SendFn = (ctrl: Ctrl, data: object) => void;
 export async function POST(req: Request) {
   const cookieHeader = req.headers.get('cookie') ?? '';
   const hasRole = cookieHeader.includes('kids_role=');
+  const isActive = cookieHeader.includes('kids_status=active');
+  const isOrgActive = cookieHeader.includes('kids_org_status=active');
+
   if (!hasRole) {
     return new Response(JSON.stringify({ error: '로그인이 필요합니다.' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      status: 401, headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  if (!isActive || !isOrgActive) {
+    return new Response(JSON.stringify({ error: '이용 권한이 없습니다.' }), {
+      status: 403, headers: { 'Content-Type': 'application/json' },
     });
   }
 

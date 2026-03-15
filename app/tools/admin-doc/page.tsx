@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import AppNav from '../../../components/AppNav';
 import { useAI } from '../../../lib/useAI';
+import ModelSelector from '../../../components/ModelSelector';
 
 type SubTool = 'newsletter' | 'diary' | 'plan' | 'letter' | 'guide';
 
@@ -275,7 +276,7 @@ function Guide({ generate, loading }: { generate: (p: string) => void; loading: 
 // ── 메인 페이지 ───────────────────────────────────────────────────────────
 export default function AdminDocPage() {
   const [active, setActive] = useState<SubTool>('newsletter');
-  const { output, loading, error, generate, copy } = useAI();
+  const { output, loading, error, generate, copy, model, setModel } = useAI();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -296,7 +297,8 @@ export default function AdminDocPage() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+        <ModelSelector value={model} onChange={setModel} />
+        <div className="tool-layout">
           {/* 사이드바 */}
           <div className="card" style={{ padding: '0.5rem' }}>
             {TOOLS.map((t) => (

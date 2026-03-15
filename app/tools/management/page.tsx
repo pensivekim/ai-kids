@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import AppNav from '../../../components/AppNav';
 import { useAI } from '../../../lib/useAI';
+import ModelSelector from '../../../components/ModelSelector';
 
 type SubTool = 'subsidy' | 'interview' | 'checklist' | 'minutes';
 
@@ -123,7 +124,7 @@ function Minutes({ generate, loading }: { generate: (p: string) => void; loading
 
 export default function ManagementPage() {
   const [active, setActive] = useState<SubTool>('subsidy');
-  const { output, loading, error, generate, copy } = useAI();
+  const { output, loading, error, generate, copy, model, setModel } = useAI();
   const [copied, setCopied] = useState(false);
   const handleCopy = () => { copy(); setCopied(true); setTimeout(() => setCopied(false), 1500); };
 
@@ -139,7 +140,8 @@ export default function ManagementPage() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+        <ModelSelector value={model} onChange={setModel} />
+        <div className="tool-layout">
           <div className="card" style={{ padding: '0.5rem' }}>
             {TOOLS.map((t) => (
               <button key={t.id} onClick={() => setActive(t.id)} style={{ width: '100%', textAlign: 'left', padding: '0.65rem 0.85rem', borderRadius: '0.5rem', border: 'none', cursor: 'pointer', background: active === t.id ? '#faf5ff' : 'transparent', color: active === t.id ? '#7c3aed' : '#374151', fontWeight: active === t.id ? 700 : 400, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
