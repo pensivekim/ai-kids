@@ -93,8 +93,8 @@ export default function LandingPage() {
 
             {/* 사용 모델 */}
             <div style={{ background: '#f8fafc', borderRadius: '0.75rem', padding: '1rem', marginBottom: '1.5rem', textAlign: 'left' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.6rem' }}>사용 AI 모델</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.6rem', textAlign: 'center' }}>사용 AI 모델</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
                 {AI_MODELS_DISPLAY.map((m) => (
                   <span key={m.id} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '0.4rem', padding: '0.25rem 0.65rem', fontSize: '0.8rem', color: '#374151' }}>
                     <span style={{ color: '#94a3b8', marginRight: '0.3rem', fontSize: '0.72rem' }}>{m.badge}</span>
@@ -104,10 +104,9 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <Link href="/login">
-              <button className="btn-primary" style={{ width: '100%', padding: '0.85rem', fontSize: '1rem' }}>무료로 시작하기</button>
-            </Link>
-            <p style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: '#94a3b8' }}>첫 14일 무료 체험 · 카드 등록 불필요</p>
+            <a href="tel:07082258585" style={{ display: 'block', textDecoration: 'none' }}>
+              <button className="btn-primary" style={{ width: '100%', padding: '0.85rem', fontSize: '1rem' }}>문의하기 · 070-8225-8585</button>
+            </a>
           </div>
         </div>
       </section>
