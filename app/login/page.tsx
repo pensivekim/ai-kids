@@ -68,10 +68,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
-      const user = await loginWithEmail(cEmail, cPassword).catch(async () => {
-        const u = await signUpWithEmail(cEmail, cPassword, cName);
-        return u;
-      });
+      const user = await signUpWithEmail(cEmail, cPassword, cName);
       await createCenter(user.uid, cEmail, cName, cCenter);
       setCookies('center_admin', 'pending', 'active');
       router.push('/pending');

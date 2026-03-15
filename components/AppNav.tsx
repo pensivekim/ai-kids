@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
-import { logout } from '../lib/auth';
+import { logoutAndClear } from '../lib/auth';
 
 export default function AppNav() {
   const { userDoc } = useAuth();
@@ -11,10 +11,7 @@ export default function AppNav() {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    await logout();
-    document.cookie = 'kids_role=; max-age=0; path=/';
-    document.cookie = 'kids_status=; max-age=0; path=/';
-    document.cookie = 'kids_org_status=; max-age=0; path=/';
+    await logoutAndClear();
     router.push('/login');
   };
 

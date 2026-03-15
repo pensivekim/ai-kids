@@ -167,3 +167,17 @@ export async function createCenter(
 export async function logout() {
   await signOut(getFirebaseAuth());
 }
+
+// 쿠키 삭제 (클라이언트 전용)
+export function clearAuthCookies() {
+  const opts = 'path=/; max-age=0';
+  document.cookie = `kids_role=; ${opts}`;
+  document.cookie = `kids_status=; ${opts}`;
+  document.cookie = `kids_org_status=; ${opts}`;
+}
+
+// 로그아웃 + 쿠키 삭제 통합
+export async function logoutAndClear() {
+  await logout();
+  clearAuthCookies();
+}

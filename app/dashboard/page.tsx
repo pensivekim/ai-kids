@@ -99,10 +99,10 @@ export default function DashboardPage() {
         {tab === 'overview' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             {[
-              { label: '활성 선생님', value: `${members.length}명`, icon: '👩‍🏫', color: '#0d9488' },
+              { label: '활성 선생님', value: `${members.filter(m => m.role === 'teacher').length}명`, icon: '👩‍🏫', color: '#0d9488' },
               { label: '승인 대기', value: `${pending.length}명`, icon: '⏳', color: '#f59e0b' },
               { label: '원 코드', value: center?.code ?? '-', icon: '🔑', color: '#6366f1' },
-              { label: '이번 달 예상 청구', value: `${(Math.max(members.length, MIN_SEATS) * SEAT_PRICE).toLocaleString()}원`, icon: '💳', color: '#8b5cf6' },
+              { label: '이번 달 예상 청구', value: `${(Math.max(members.filter(m => m.role === 'teacher').length, MIN_SEATS) * SEAT_PRICE).toLocaleString()}원`, icon: '💳', color: '#8b5cf6' },
             ].map((s) => (
               <div key={s.label} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2rem' }}>{s.icon}</div>
