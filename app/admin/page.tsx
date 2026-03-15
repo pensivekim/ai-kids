@@ -143,7 +143,7 @@ export default function AdminPage() {
                   <div key={c.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', background: '#f8fafc', borderRadius: '0.75rem', border: '1px solid #e2e8f0' }}>
                     <div>
                       <div style={{ fontWeight: 600 }}>{c.name}</div>
-                      <div style={{ fontSize: '0.85rem', color: '#64748b' }}>요청 요금제: {c.plan === 'pro' ? '프리미엄' : '스타터'}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b' }}>선생님 수: {c.seatCount ?? 0}명</div>
                     </div>
                     <button
                       onClick={() => handleActivate(c.id, c.adminUid)}
