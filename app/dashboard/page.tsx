@@ -8,6 +8,7 @@ import { getPendingTeachers, getCenterMembers, approveUser, rejectUser } from '.
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { getFirebaseDb } from '../../lib/firebase';
 import type { KidsUser, Center } from '../../types';
+import { SEAT_PRICE, MIN_SEATS } from '../../types';
 
 export default function DashboardPage() {
   const { userDoc, loading } = useAuth();
@@ -98,10 +99,10 @@ export default function DashboardPage() {
         {tab === 'overview' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             {[
-              { label: '전체 선생님', value: members.length, icon: '👩‍🏫', color: '#0d9488' },
-              { label: '승인 대기', value: pending.length, icon: '⏳', color: '#f59e0b' },
+              { label: '활성 선생님', value: `${members.length}명`, icon: '👩‍🏫', color: '#0d9488' },
+              { label: '승인 대기', value: `${pending.length}명`, icon: '⏳', color: '#f59e0b' },
               { label: '원 코드', value: center?.code ?? '-', icon: '🔑', color: '#6366f1' },
-              { label: '요금제', value: center?.plan === 'pro' ? '프리미엄' : '스타터', icon: '💎', color: '#8b5cf6' },
+              { label: '이번 달 예상 청구', value: `${(Math.max(members.length, MIN_SEATS) * SEAT_PRICE).toLocaleString()}원`, icon: '💳', color: '#8b5cf6' },
             ].map((s) => (
               <div key={s.label} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2rem' }}>{s.icon}</div>

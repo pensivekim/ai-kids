@@ -4,35 +4,24 @@ export type UserRole = 'super_admin' | 'center_admin' | 'teacher';
 // 승인 상태
 export type UserStatus = 'pending' | 'active' | 'rejected' | 'inactive';
 
-// 요금제 (원 단위 — 1원 = 1구독)
-export type PlanTier = 'starter' | 'pro';
+// 요금 정책 (인당 과금)
+export const SEAT_PRICE = 9900;  // 원/월/인
+export const MIN_SEATS = 3;      // 최소 청구 인원
 
-export const PLAN_CONFIG: Record<PlanTier, {
-  name: string;
-  price: number;       // 원/월
-  tokens: number;      // 월 토큰 한도
-  models: AIModel[];
-}> = {
-  starter: {
-    name: '스타터',
-    price: 39000,
-    tokens: 500000,
-    models: ['gemini-flash'],
-  },
-  pro: {
-    name: '프리미엄',
-    price: 79000,
-    tokens: 2000000,
-    models: ['gemini-flash', 'claude-haiku', 'gpt-4o-mini', 'claude-sonnet'],
-  },
-};
+// 사용 가능한 AI 모델 목록 (표시용)
+export const AI_MODELS_DISPLAY = [
+  { id: 'gemini-flash',  name: 'Gemini 2.0 Flash',  badge: 'Google' },
+  { id: 'claude-haiku',  name: 'Claude Haiku 4.5',   badge: 'Anthropic' },
+  { id: 'claude-sonnet', name: 'Claude Sonnet 4.5',  badge: 'Anthropic' },
+  { id: 'gpt-4o-mini',   name: 'GPT-4o mini',        badge: 'OpenAI' },
+];
 
 // 기관 (어린이집)
 export interface Center {
   id: string;
   name: string;
   code: string;           // 선생님 가입 시 입력하는 원 코드 (6자리)
-  plan: PlanTier;
+  seatCount: number;      // 현재 활성 선생님 수 (= 청구 인원)
   tokenUsed: number;
   status: 'active' | 'suspended' | 'pending';
   adminUid: string;       // center_admin uid

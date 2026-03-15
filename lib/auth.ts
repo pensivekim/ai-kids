@@ -6,10 +6,10 @@ import {
 } from 'firebase/auth';
 import {
   doc, setDoc, getDoc, updateDoc, serverTimestamp,
-  collection, query, where, getDocs,
+  collection, query, where, getDocs, increment,
 } from 'firebase/firestore';
 import { getFirebaseAuth, getFirebaseDb } from './firebase';
-import type { KidsUser, UserRole, PlanTier } from '../types';
+import type { KidsUser, UserRole } from '../types';
 
 // 이메일 로그인
 export async function loginWithEmail(email: string, password: string) {
@@ -101,9 +101,15 @@ export async function getPendingTeachers(centerId: string): Promise<KidsUser[]> 
   return snap.docs.map((d) => d.data() as KidsUser);
 }
 
-// 선생님 승인
+// 선생님 승인 (seatCount +1)
 export async function approveUser(uid: string): Promise<void> {
-  await updateDoc(doc(getFirebaseDb(), 'users', uid), { status: 'active' });
+  const db = getFirebaseDb();
+  const userSnap = await getDoc(doc(db, 'users', uid));
+  const centerId = userSnap.data()?.centerId;
+  await updateDoc(doc(db, 'users', uid), { status: 'active' });
+  if (centerId) {
+    await updateDoc(doc(db, 'centers', centerId), { seatCount: increment(1) });
+  }
 }
 
 // 선생님 거절
@@ -127,7 +133,6 @@ export async function createCenter(
   email: string,
   displayName: string,
   centerName: string,
-  plan: PlanTier,
 ) {
   const db = getFirebaseDb();
   const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -136,7 +141,7 @@ export async function createCenter(
   await setDoc(centerRef, {
     name: centerName,
     code,
-    plan,
+    seatCount: 0,
     tokenUsed: 0,
     status: 'pending',
     adminUid: uid,

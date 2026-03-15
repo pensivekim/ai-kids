@@ -7,6 +7,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
 import { getFirebaseDb } from '../../lib/firebase';
 import type { Center, KidsUser } from '../../types';
+import { SEAT_PRICE, MIN_SEATS } from '../../types';
 
 export default function AdminPage() {
   const { userDoc, loading } = useAuth();
@@ -71,8 +72,9 @@ export default function AdminPage() {
         {/* 통계 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
           {[
-            { label: '전체 활성 원', value: centers.length, icon: '🏫', color: '#0d9488' },
-            { label: '승인 대기', value: pendingCenters.length, icon: '⏳', color: '#f59e0b' },
+            { label: '전체 활성 원', value: `${centers.length}개`, icon: '🏫', color: '#0d9488' },
+            { label: '승인 대기', value: `${pendingCenters.length}개`, icon: '⏳', color: '#f59e0b' },
+            { label: '월 예상 매출', value: `${centers.reduce((sum, c) => sum + Math.max((c.seatCount ?? 0), MIN_SEATS) * SEAT_PRICE, 0).toLocaleString()}원`, icon: '💰', color: '#16a34a' },
           ].map((s) => (
             <div key={s.label} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <span style={{ fontSize: '2rem' }}>{s.icon}</span>
@@ -98,7 +100,7 @@ export default function AdminPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
-                  {['어린이집', '원 코드', '요금제', '상태', ''].map((h) => (
+                  {['어린이집', '원 코드', '선생님', '월 청구액', '상태', ''].map((h) => (
                     <th key={h} style={{ textAlign: 'left', padding: '0.6rem 0.75rem', color: '#64748b', fontWeight: 600 }}>{h}</th>
                   ))}
                 </tr>
@@ -111,10 +113,9 @@ export default function AdminPage() {
                   <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '0.65rem 0.75rem', fontWeight: 600 }}>{c.name}</td>
                     <td style={{ padding: '0.65rem 0.75rem', fontFamily: 'monospace', color: '#6366f1' }}>{c.code}</td>
-                    <td style={{ padding: '0.65rem 0.75rem' }}>
-                      <span style={{ background: c.plan === 'pro' ? '#f3e8ff' : '#eff6ff', color: c.plan === 'pro' ? '#7c3aed' : '#2563eb', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>
-                        {c.plan === 'pro' ? '프리미엄' : '스타터'}
-                      </span>
+                    <td style={{ padding: '0.65rem 0.75rem', textAlign: 'center' }}>{c.seatCount ?? 0}명</td>
+                    <td style={{ padding: '0.65rem 0.75rem', fontWeight: 600, color: '#0d9488' }}>
+                      {(Math.max((c.seatCount ?? 0), MIN_SEATS) * SEAT_PRICE).toLocaleString()}원
                     </td>
                     <td style={{ padding: '0.65rem 0.75rem' }}>
                       <span style={{ background: '#dcfce7', color: '#16a34a', padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>활성</span>

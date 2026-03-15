@@ -72,7 +72,7 @@ export default function LoginPage() {
         const u = await signUpWithEmail(cEmail, cPassword, cName);
         return u;
       });
-      await createCenter(user.uid, cEmail, cName, cCenter, 'starter');
+      await createCenter(user.uid, cEmail, cName, cCenter);
       setCookies('center_admin', 'pending', 'active');
       router.push('/pending');
     } catch (e: unknown) {

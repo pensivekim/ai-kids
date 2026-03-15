@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { TOOL_CATEGORIES, ROLE_HOME } from '../types';
+import { TOOL_CATEGORIES, ROLE_HOME, SEAT_PRICE, MIN_SEATS, AI_MODELS_DISPLAY } from '../types';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -76,30 +76,39 @@ export default function LandingPage() {
 
       {/* 요금제 */}
       <section style={{ background: 'white', padding: '4rem 2rem' }}>
-        <h2 style={{ textAlign: 'center', fontWeight: 800, fontSize: '1.6rem', color: '#1e293b', marginBottom: '2.5rem' }}>
-          요금제 (어린이집 단위)
+        <h2 style={{ textAlign: 'center', fontWeight: 800, fontSize: '1.6rem', color: '#1e293b', marginBottom: '0.75rem' }}>
+          요금제
         </h2>
-        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap', maxWidth: '800px', margin: '0 auto' }}>
-          {[
-            { name: '스타터', price: '39,000', desc: '월 500K 토큰 · Gemini AI', badge: '' },
-            { name: '프리미엄', price: '79,000', desc: '월 2M 토큰 · Claude + GPT 포함', badge: '추천' },
-          ].map((plan) => (
-            <div key={plan.name} className="card" style={{ flex: '1', minWidth: '280px', border: plan.badge ? '2px solid #0d9488' : '1px solid #e2e8f0', textAlign: 'center', position: 'relative' }}>
-              {plan.badge && (
-                <span style={{ position: 'absolute', top: '-0.75rem', left: '50%', transform: 'translateX(-50%)', background: '#0d9488', color: 'white', fontSize: '0.75rem', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontWeight: 700 }}>
-                  {plan.badge}
-                </span>
-              )}
-              <h3 style={{ fontWeight: 700, fontSize: '1.2rem', margin: '0 0 0.5rem' }}>{plan.name}</h3>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#0d9488', margin: '0.5rem 0' }}>
-                {plan.price}<span style={{ fontSize: '1rem', color: '#64748b' }}>원/월</span>
-              </div>
-              <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0.5rem 0 1.5rem' }}>{plan.desc}</p>
-              <Link href="/login">
-                <button className="btn-primary" style={{ width: '100%' }}>시작하기</button>
-              </Link>
+        <p style={{ textAlign: 'center', color: '#64748b', fontSize: '0.95rem', marginBottom: '2.5rem' }}>
+          선생님 수만큼만 납부 · 추가 인원 시 자동 반영
+        </p>
+        <div style={{ maxWidth: '560px', margin: '0 auto' }}>
+          <div className="card" style={{ border: '2px solid #0d9488', textAlign: 'center', position: 'relative' }}>
+            <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#0d9488', margin: '0.5rem 0 0.25rem' }}>
+              {SEAT_PRICE.toLocaleString()}<span style={{ fontSize: '1.1rem', color: '#64748b', fontWeight: 500 }}>원 / 월 / 선생님</span>
             </div>
-          ))}
+            <p style={{ color: '#64748b', fontSize: '0.9rem', margin: '0.25rem 0 1.5rem' }}>
+              최소 {MIN_SEATS}명 · 예) 10명 원 → 월 {(SEAT_PRICE * 10).toLocaleString()}원
+            </p>
+
+            {/* 사용 모델 */}
+            <div style={{ background: '#f8fafc', borderRadius: '0.75rem', padding: '1rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.6rem' }}>사용 AI 모델</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {AI_MODELS_DISPLAY.map((m) => (
+                  <span key={m.id} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '0.4rem', padding: '0.25rem 0.65rem', fontSize: '0.8rem', color: '#374151' }}>
+                    <span style={{ color: '#94a3b8', marginRight: '0.3rem', fontSize: '0.72rem' }}>{m.badge}</span>
+                    {m.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <Link href="/login">
+              <button className="btn-primary" style={{ width: '100%', padding: '0.85rem', fontSize: '1rem' }}>무료로 시작하기</button>
+            </Link>
+            <p style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: '#94a3b8' }}>첫 14일 무료 체험 · 카드 등록 불필요</p>
+          </div>
         </div>
       </section>
 
