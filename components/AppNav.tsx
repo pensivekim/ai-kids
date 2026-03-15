@@ -54,7 +54,7 @@ export default function AppNav() {
         </nav>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {userDoc && (
+        {userDoc && userDoc.role !== 'super_admin' && (
           <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
             {userDoc.centerName ? `${userDoc.centerName} · ` : ''}{userDoc.displayName}
           </span>
