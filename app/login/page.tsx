@@ -81,7 +81,9 @@ export default function LoginPage() {
   };
 
   const tabStyle = (t: Tab) => ({
-    padding: '0.6rem 1.2rem',
+    flex: 1,
+    padding: '0.6rem 0',
+    textAlign: 'center',
     color: tab === t ? '#0d9488' : '#64748b',
     fontWeight: tab === t ? 700 : 400,
     cursor: 'pointer',
@@ -89,6 +91,7 @@ export default function LoginPage() {
     border: 'none',
     borderBottom: tab === t ? '2px solid #0d9488' : '2px solid transparent',
     fontSize: '0.9rem',
+    whiteSpace: 'nowrap',
   } as React.CSSProperties);
 
   return (
@@ -102,7 +105,7 @@ export default function LoginPage() {
 
         <div className="card">
           {/* 탭 */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: '1.5rem', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: '1.5rem' }}>
             <button style={tabStyle('login')} onClick={() => setTab('login')}>로그인</button>
             <button style={tabStyle('teacher-signup')} onClick={() => setTab('teacher-signup')}>선생님 가입</button>
             <button style={tabStyle('center-signup')} onClick={() => setTab('center-signup')}>원장님 가입</button>
