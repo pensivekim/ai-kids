@@ -10,10 +10,9 @@ export const MIN_SEATS = 3;      // 최소 청구 인원
 
 // 사용 가능한 AI 모델 목록 (표시용)
 export const AI_MODELS_DISPLAY = [
-  { id: 'gemini-flash',  name: 'Gemini 2.0 Flash',  badge: 'Google' },
-  { id: 'claude-haiku',  name: 'Claude Haiku 4.5',   badge: 'Anthropic' },
-  { id: 'claude-sonnet', name: 'Claude Sonnet 4.5',  badge: 'Anthropic' },
-  { id: 'gpt-4o-mini',   name: 'GPT-4o mini',        badge: 'OpenAI' },
+  { id: 'gemini-flash', name: 'Gemini 2.0 Flash', badge: 'Google' },
+  { id: 'claude-haiku', name: 'Claude Haiku 4.5',  badge: 'Anthropic' },
+  { id: 'gpt-4o-mini',  name: 'GPT-4o mini',       badge: 'OpenAI' },
 ];
 
 // 기관 (어린이집)
@@ -44,7 +43,6 @@ export interface KidsUser {
 // AI 모델
 export type AIModel =
   | 'claude-haiku'
-  | 'claude-sonnet'
   | 'gpt-4o-mini'
   | 'gemini-flash';
 

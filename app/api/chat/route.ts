@@ -6,10 +6,9 @@ const CF_ACCOUNT = 'f6c784dae2ac774f3f877b4ba39a88d6';
 const GW = `https://gateway.ai.cloudflare.com/v1/${CF_ACCOUNT}/carebot`;
 
 const MODEL_ID: Record<AIModel, string> = {
-  'claude-haiku':  'claude-haiku-4-5-20251001',
-  'claude-sonnet': 'claude-sonnet-4-5',
-  'gpt-4o-mini':   'gpt-4o-mini',
-  'gemini-flash':  'gemini-2.0-flash',
+  'claude-haiku': 'claude-haiku-4-5-20251001',
+  'gpt-4o-mini':  'gpt-4o-mini',
+  'gemini-flash': 'gemini-2.0-flash',
 };
 
 interface Msg { role: string; content: string; }
