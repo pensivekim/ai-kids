@@ -97,21 +97,75 @@ export default function DashboardPage() {
 
         {/* 개요 */}
         {tab === 'overview' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-            {[
-              { label: '활성 선생님', value: `${members.filter(m => m.role === 'teacher').length}명`, icon: '👩‍🏫', color: '#0d9488' },
-              { label: '승인 대기', value: `${pending.length}명`, icon: '⏳', color: '#f59e0b' },
-              { label: '원 코드', value: center?.code ?? '-', icon: '🔑', color: '#6366f1' },
-              { label: '이번 달 예상 청구', value: `${(Math.max(members.filter(m => m.role === 'teacher').length, MIN_SEATS) * SEAT_PRICE).toLocaleString()}원`, icon: '💳', color: '#8b5cf6' },
-            ].map((s) => (
-              <div key={s.label} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ fontSize: '2rem' }}>{s.icon}</div>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{s.label}</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, color: s.color }}>{s.value}</div>
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+              {[
+                { label: '활성 선생님', value: `${members.filter(m => m.role === 'teacher').length}명`, icon: '👩‍🏫', color: '#0d9488' },
+                { label: '승인 대기', value: `${pending.length}명`, icon: '⏳', color: '#f59e0b' },
+                { label: '원 코드', value: center?.code ?? '-', icon: '🔑', color: '#6366f1' },
+                { label: '이번 달 예상 청구', value: `${(Math.max(members.filter(m => m.role === 'teacher').length, MIN_SEATS) * SEAT_PRICE).toLocaleString()}원`, icon: '💳', color: '#8b5cf6' },
+              ].map((s) => (
+                <div key={s.label} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ fontSize: '2rem' }}>{s.icon}</div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{s.label}</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 900, color: s.color }}>{s.value}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* 운영 도구 */}
+            <h2 style={{ fontWeight: 700, fontSize: '1rem', color: '#475569', marginBottom: '0.75rem' }}>🔴 운영 필수</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              {[
+                { href: '/dashboard/attendance', icon: '📋', label: '출결 관리', desc: 'QR 출결 · 복지로 CSV' },
+                { href: '/dashboard/tuition', icon: '💰', label: '원비 수납', desc: '청구 · 카카오페이 · 미납' },
+                { href: '/dashboard/medication', icon: '💊', label: '투약 의뢰', desc: '부모 요청 · 교사 서명' },
+              ].map((m) => (
+                <a key={m.href} href={m.href} style={{ textDecoration: 'none' }}>
+                  <div style={{ background: 'white', border: '2px solid #fee2e2', borderRadius: '0.75rem', padding: '1rem', cursor: 'pointer' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>{m.icon}</div>
+                    <div style={{ fontWeight: 700, color: '#1e293b' }}>{m.label}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{m.desc}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            <h2 style={{ fontWeight: 700, fontSize: '1rem', color: '#475569', marginBottom: '0.75rem' }}>🟡 안전·규정 준수</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              {[
+                { href: '/dashboard/cctv', icon: '📹', label: 'CCTV 열람 요청', desc: '신청·승인·기한 관리' },
+                { href: '/dashboard/drills', icon: '🚒', label: '재난·소방 훈련', desc: '법정 횟수 자동 체크' },
+                { href: '/dashboard/allergies', icon: '⚠️', label: '알레르기 급식', desc: '메뉴 저장 시 자동 경보' },
+              ].map((m) => (
+                <a key={m.href} href={m.href} style={{ textDecoration: 'none' }}>
+                  <div style={{ background: 'white', border: '2px solid #fef3c7', borderRadius: '0.75rem', padding: '1rem', cursor: 'pointer' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>{m.icon}</div>
+                    <div style={{ fontWeight: 700, color: '#1e293b' }}>{m.label}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{m.desc}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            <h2 style={{ fontWeight: 700, fontSize: '1rem', color: '#475569', marginBottom: '0.75rem' }}>🟢 차별화 기능</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
+              {[
+                { href: '/dashboard/staff', icon: '👩‍🏫', label: '교사 근태·급여', desc: '출퇴근 · 급여 자동 계산' },
+                { href: '/dashboard/accreditation', icon: '🏅', label: '평가인증 준비', desc: '22개 지표 체크리스트' },
+                { href: '/dashboard/consultations', icon: '📅', label: '부모 상담 예약', desc: '캘린더 · AI 요약' },
+              ].map((m) => (
+                <a key={m.href} href={m.href} style={{ textDecoration: 'none' }}>
+                  <div style={{ background: 'white', border: '2px solid #dcfce7', borderRadius: '0.75rem', padding: '1rem', cursor: 'pointer' }}>
+                    <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>{m.icon}</div>
+                    <div style={{ fontWeight: 700, color: '#1e293b' }}>{m.label}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{m.desc}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         )}
 

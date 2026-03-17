@@ -25,7 +25,7 @@ export default function AppNav() {
         { href: '/dashboard', label: '대시보드' },
         { href: '/tools', label: 'AI 도구' },
       ]
-    : [{ href: '/tools', label: 'AI 도구' }];
+    : [{ href: '/tools', label: 'AI 도구' }, { href: '/tools/clockin', label: '출퇴근' }];
 
   return (
     <header style={{ background: 'white', borderBottom: '1px solid #e2e8f0', padding: '0.85rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 100 }}>

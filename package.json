@@ -11,6 +11,7 @@
     "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name ai-kids"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "firebase": "^12.10.0",
     "next": "15.5.2",
     "react": "^18.3.1",
