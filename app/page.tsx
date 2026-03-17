@@ -17,6 +17,15 @@ export default function LandingPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0f9ff 100%)' }}>
+      {/* 통합 안내 배너 */}
+      <div style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 600 }}>
+          {"\uD83C\uDF1F"} AI {"\uB3C4\uAD6C\uAC00"} my.genomic.cc{"\uC5D0 \uD1B5\uD569\uB418\uC5C8\uC2B5\uB2C8\uB2E4"}
+        </span>
+        <a href="https://my.genomic.cc/admin" style={{ background: 'white', color: '#6366f1', fontSize: '0.8rem', fontWeight: 700, padding: '0.35rem 1rem', borderRadius: '2rem', textDecoration: 'none' }}>
+          {"\uBC14\uB85C\uAC00\uAE30"} →
+        </a>
+      </div>
       {/* 헤더 */}
       <header style={{ background: 'white', borderBottom: '1px solid #e2e8f0', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
