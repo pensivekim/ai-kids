@@ -18,6 +18,7 @@ export default function AppNav() {
   const navLinks = userDoc?.role === 'super_admin'
     ? [
         { href: '/admin', label: '관리자' },
+        { href: '/dashboard', label: '대시보드' },
         { href: '/tools', label: 'AI 도구' },
       ]
     : userDoc?.role === 'center_admin'
