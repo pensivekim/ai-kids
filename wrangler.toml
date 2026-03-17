@@ -6,4 +6,4 @@ pages_build_output_dir = ".vercel/output/static"
 [[d1_databases]]
 binding = "DB"
 database_name = "ai-kids-ops"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "3a0bdca7-162c-4aab-aaab-c58d4032a883"
