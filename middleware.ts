@@ -6,7 +6,7 @@ const ROLE_PATHS: Record<string, string> = {
   teacher:      '/tools',
 };
 
-const PUBLIC_PATHS = ['/login', '/signup', '/', '/public'];
+const PUBLIC_PATHS = ['/login', '/signup', '/', '/public', '/phone-verify'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

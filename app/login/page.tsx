@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginWithEmail, signUpWithEmail, createCenter } from '../../lib/auth';
+import { loginWithEmail, signUpWithEmail, createCenter, loginWithKakao } from '../../lib/auth';
 import { getUserDoc } from '../../lib/auth';
+import { kakaoLogin } from '../../lib/kakao';
 import { ROLE_HOME } from '../../types';
 
 type Tab = 'login' | 'teacher-signup' | 'center-signup';
@@ -29,12 +30,36 @@ export default function LoginPage() {
   const [cEmail, setCEmail] = useState('');
   const [cPassword, setCPassword] = useState('');
   const [cCenter, setCCenter] = useState('');
+  const [kakaoLoading, setKakaoLoading] = useState(false);
 
   const setCookies = (role: string, status: string, orgStatus: string) => {
     const opts = 'path=/; max-age=86400; SameSite=Lax';
     document.cookie = `kids_role=${role}; ${opts}`;
     document.cookie = `kids_status=${status}; ${opts}`;
     document.cookie = `kids_org_status=${orgStatus}; ${opts}`;
+  };
+
+  const handleKakaoLogin = async () => {
+    setError(''); setKakaoLoading(true);
+    try {
+      const { kakaoId, nickname } = await kakaoLogin();
+      const result = await loginWithKakao(kakaoId, nickname);
+
+      if (result.isNew || !result.userDoc?.centerId) {
+        // 신규 or 어린이집 미연결 → 전화번호 입력 페이지
+        setCookies('teacher', 'pending', 'active');
+        router.push('/phone-verify');
+        return;
+      }
+
+      // 기존 회원 → 정상 로그인
+      const doc = result.userDoc;
+      setCookies(doc.role, doc.status, 'active');
+      if (doc.status === 'pending') { router.push('/pending'); return; }
+      router.push(ROLE_HOME[doc.role]);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '카카오 로그인 실패');
+    } finally { setKakaoLoading(false); }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -116,19 +141,42 @@ export default function LoginPage() {
 
           {/* 로그인 */}
           {tab === 'login' && (
-            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label className="label">이메일</label>
-                <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="이메일 입력" />
-              </div>
-              <div>
-                <label className="label">비밀번호</label>
-                <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="비밀번호 입력" />
-              </div>
-              <button className="btn-primary" type="submit" disabled={loading} style={{ width: '100%', padding: '0.75rem' }}>
-                {loading ? '로그인 중...' : '로그인'}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* 카카오 로그인 */}
+              <button
+                onClick={handleKakaoLogin}
+                disabled={kakaoLoading}
+                style={{
+                  width: '100%', padding: '0.85rem', border: 'none', borderRadius: '0.75rem',
+                  background: '#FEE500', color: '#191919', fontSize: '1rem', fontWeight: 700,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 1C4.58 1 1 3.79 1 7.19c0 2.15 1.43 4.04 3.58 5.12l-.91 3.37c-.08.29.25.52.5.35l4.01-2.67c.27.03.54.04.82.04 4.42 0 8-2.79 8-6.21C17 3.79 13.42 1 9 1z" fill="#191919"/></svg>
+                {kakaoLoading ? '로그인 중...' : '카카오로 시작하기'}
               </button>
-            </form>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '0.25rem 0' }}>
+                <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+                <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>또는 이메일로</span>
+                <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
+              </div>
+
+              {/* 이메일 로그인 */}
+              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label className="label">이메일</label>
+                  <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="이메일 입력" />
+                </div>
+                <div>
+                  <label className="label">비밀번호</label>
+                  <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="비밀번호 입력" />
+                </div>
+                <button className="btn-primary" type="submit" disabled={loading} style={{ width: '100%', padding: '0.75rem' }}>
+                  {loading ? '로그인 중...' : '이메일로 로그인'}
+                </button>
+              </form>
+            </div>
           )}
 
           {/* 선생님 가입 */}

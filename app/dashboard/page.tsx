@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AppNav from '../../components/AppNav';
 import { useAuth } from '../../contexts/AuthContext';
-import { getPendingTeachers, getCenterMembers, approveUser, rejectUser } from '../../lib/auth';
+import { getPendingTeachers, getCenterMembers, approveUser, rejectUser, preregisterTeacher, getPreregisteredTeachers, deletePreregisteredTeacher } from '../../lib/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { getFirebaseDb } from '../../lib/firebase';
 import type { KidsUser, Center } from '../../types';
@@ -16,8 +16,13 @@ export default function DashboardPage() {
   const [center, setCenter] = useState<Center | null>(null);
   const [pending, setPending] = useState<KidsUser[]>([]);
   const [members, setMembers] = useState<KidsUser[]>([]);
-  const [tab, setTab] = useState<'overview' | 'members' | 'pending'>('overview');
+  const [tab, setTab] = useState<'overview' | 'members' | 'pending' | 'register'>('overview');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [preTeachers, setPreTeachers] = useState<{ id: string; name: string; phone: string; linked: boolean }[]>([]);
+  const [regName, setRegName] = useState('');
+  const [regPhone, setRegPhone] = useState('');
+  const [regLoading, setRegLoading] = useState(false);
+  const [regMsg, setRegMsg] = useState('');
 
   useEffect(() => {
     if (!loading && userDoc?.role !== 'center_admin' && userDoc?.role !== 'super_admin') {
@@ -46,6 +51,10 @@ export default function DashboardPage() {
     // 전체 구성원
     const m = await getCenterMembers(userDoc.centerId);
     setMembers(m);
+
+    // 사전등록 선생님
+    const pre = await getPreregisteredTeachers(userDoc.centerId);
+    setPreTeachers(pre);
   };
 
   const handleApprove = async (uid: string) => {
@@ -92,6 +101,9 @@ export default function DashboardPage() {
           <button style={tabStyle('members')} onClick={() => setTab('members')}>선생님 목록</button>
           <button style={tabStyle('pending')} onClick={() => setTab('pending')}>
             승인 대기 {pending.length > 0 && <span style={{ background: '#dc2626', color: 'white', borderRadius: '1rem', padding: '0 0.4rem', fontSize: '0.75rem', marginLeft: '0.3rem' }}>{pending.length}</span>}
+          </button>
+          <button style={tabStyle('register')} onClick={() => setTab('register')}>
+            선생님 등록
           </button>
         </div>
 
@@ -236,6 +248,89 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        )}
+
+        {/* 선생님 사전등록 */}
+        {tab === 'register' && (
+          <div className="card">
+            <h3 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>선생님 사전등록</h3>
+            <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+              선생님의 이름과 전화번호를 등록하면, 선생님이 카카오 로그인 후 전화번호만 입력하면 자동으로 연결됩니다.
+            </p>
+
+            {regMsg && (
+              <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '0.5rem', padding: '0.75rem', color: '#16a34a', fontSize: '0.875rem', marginBottom: '1rem' }}>
+                {regMsg}
+              </div>
+            )}
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!userDoc?.centerId || !userDoc?.centerName) return;
+              setRegLoading(true); setRegMsg('');
+              try {
+                await preregisterTeacher(userDoc.centerId, userDoc.centerName, regName, regPhone);
+                setRegMsg(`${regName} 선생님이 등록되었습니다.`);
+                setRegName(''); setRegPhone('');
+                const pre = await getPreregisteredTeachers(userDoc.centerId);
+                setPreTeachers(pre);
+              } catch (err) {
+                setRegMsg(err instanceof Error ? err.message : '등록 실패');
+              } finally { setRegLoading(false); }
+            }} style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+              <input className="input" value={regName} onChange={(e) => setRegName(e.target.value)} required placeholder="선생님 이름" style={{ flex: '1 1 140px' }} />
+              <input className="input" type="tel" value={regPhone} onChange={(e) => setRegPhone(e.target.value)} required placeholder="01012345678" style={{ flex: '1 1 160px' }} />
+              <button className="btn-primary" type="submit" disabled={regLoading} style={{ padding: '0.6rem 1.5rem', whiteSpace: 'nowrap' }}>
+                {regLoading ? '등록 중...' : '등록'}
+              </button>
+            </form>
+
+            {/* 등록 목록 */}
+            {preTeachers.length === 0 ? (
+              <p style={{ color: '#94a3b8', textAlign: 'center', padding: '1.5rem' }}>사전등록된 선생님이 없습니다.</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                    {['이름', '전화번호', '상태', ''].map((h) => (
+                      <th key={h} style={{ textAlign: 'left', padding: '0.6rem 0.75rem', color: '#64748b', fontWeight: 600 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {preTeachers.map((t) => (
+                    <tr key={t.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '0.65rem 0.75rem', fontWeight: 600 }}>{t.name}</td>
+                      <td style={{ padding: '0.65rem 0.75rem', color: '#64748b' }}>{t.phone}</td>
+                      <td style={{ padding: '0.65rem 0.75rem' }}>
+                        <span style={{
+                          background: t.linked ? '#dcfce7' : '#fef9c3',
+                          color: t.linked ? '#16a34a' : '#a16207',
+                          padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600,
+                        }}>
+                          {t.linked ? '연결됨' : '대기'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '0.65rem 0.75rem' }}>
+                        {!t.linked && (
+                          <button
+                            onClick={async () => {
+                              await deletePreregisteredTeacher(t.id);
+                              const pre = await getPreregisteredTeachers(userDoc!.centerId!);
+                              setPreTeachers(pre);
+                            }}
+                            style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '0.8rem' }}
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         )}
