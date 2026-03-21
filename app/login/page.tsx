@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { loginWithEmail, signUpWithEmail, createCenter, loginWithKakao } from '../../lib/auth';
 import { getUserDoc } from '../../lib/auth';
 import { kakaoLogin } from '../../lib/kakao';
@@ -11,6 +11,7 @@ type Tab = 'login' | 'teacher-signup' | 'center-signup';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>('login');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,41 @@ export default function LoginPage() {
   const [cCenter, setCCenter] = useState('');
   const [kakaoLoading, setKakaoLoading] = useState(false);
 
+  // 카카오 콜백 처리
+  useEffect(() => {
+    const isKakao = searchParams.get('kakao');
+    const kakaoId = searchParams.get('kakaoId');
+    const nickname = searchParams.get('nickname') || '';
+    if (isKakao && kakaoId) {
+      (async () => {
+        setKakaoLoading(true);
+        try {
+          const result = await loginWithKakao(kakaoId, nickname);
+          const opts = 'path=/; max-age=86400; SameSite=Lax';
+          if (result.isNew || !result.userDoc?.centerId) {
+            document.cookie = `kids_role=teacher; ${opts}`;
+            document.cookie = `kids_status=pending; ${opts}`;
+            document.cookie = `kids_org_status=active; ${opts}`;
+            router.push('/phone-verify');
+          } else {
+            const doc = result.userDoc;
+            document.cookie = `kids_role=${doc.role}; ${opts}`;
+            document.cookie = `kids_status=${doc.status}; ${opts}`;
+            document.cookie = `kids_org_status=active; ${opts}`;
+            if (doc.status === 'pending') { router.push('/pending'); return; }
+            router.push(ROLE_HOME[doc.role]);
+          }
+        } catch (e: unknown) {
+          setError(e instanceof Error ? e.message : '카카오 로그인 실패');
+          setKakaoLoading(false);
+        }
+      })();
+    }
+
+    const errParam = searchParams.get('error');
+    if (errParam) setError(`카카오 로그인 오류: ${errParam}`);
+  }, [searchParams, router]);
+
   const setCookies = (role: string, status: string, orgStatus: string) => {
     const opts = 'path=/; max-age=86400; SameSite=Lax';
     document.cookie = `kids_role=${role}; ${opts}`;
@@ -40,26 +76,12 @@ export default function LoginPage() {
   };
 
   const handleKakaoLogin = async () => {
-    setError(''); setKakaoLoading(true);
+    setError('');
     try {
-      const { kakaoId, nickname } = await kakaoLogin();
-      const result = await loginWithKakao(kakaoId, nickname);
-
-      if (result.isNew || !result.userDoc?.centerId) {
-        // 신규 or 어린이집 미연결 → 전화번호 입력 페이지
-        setCookies('teacher', 'pending', 'active');
-        router.push('/phone-verify');
-        return;
-      }
-
-      // 기존 회원 → 정상 로그인
-      const doc = result.userDoc;
-      setCookies(doc.role, doc.status, 'active');
-      if (doc.status === 'pending') { router.push('/pending'); return; }
-      router.push(ROLE_HOME[doc.role]);
+      await kakaoLogin(); // 카카오 페이지로 리다이렉트
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : '카카오 로그인 실패');
-    } finally { setKakaoLoading(false); }
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
