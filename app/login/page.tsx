@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { loginWithEmail, signUpWithEmail, createCenter, loginWithKakao } from '../../lib/auth';
 import { getUserDoc } from '../../lib/auth';
@@ -10,6 +10,14 @@ import { ROLE_HOME } from '../../types';
 type Tab = 'login' | 'teacher-signup' | 'center-signup';
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0fdf4, #ecfdf5)' }}>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>('login');
